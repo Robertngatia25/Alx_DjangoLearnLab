@@ -6,3 +6,5 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     publication_year = models.IntegerField()
 
+    def __str__(self):
+        return self.title # This helps in displaying the object clearly in the Django shell and admin
