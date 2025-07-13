@@ -3,7 +3,7 @@
 venv/
 
 # Ignore Django specific files
-__pycache__/
-*.pyc
-db.sqlite3
-.env/  # If you store environment variables in a .env file
+#__pycache__/
+#*.pyc
+#db.sqlite3
+#.env/  # If you store environment variables in a .env file
