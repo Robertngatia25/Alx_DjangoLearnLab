@@ -53,6 +53,8 @@ print(f"Librarian: {librarian1.name} (Created: {created})")
 librarian2, created = Librarian.objects.get_or_create(name="Bob Johnson", library=library2)
 print(f"Librarian: {librarian2.name} (Created: {created})")
 
+
+# --- Performing Queries ---
 print("\n--- Performing Queries ---")
 
 # --- Query 1: All books by a specific author ---
@@ -68,22 +70,28 @@ except Author.DoesNotExist:
 
 # --- Query 2: List all books in a library ---
 print("\nQuery 2: All books in Central Library")
+# --- MODIFIED LINE START ---
+library_name_central = "Central Library" # Define a variable for the library name
 try:
-    central_library = Library.objects.get(name="Central Library")
+    central_library = Library.objects.get(name=library_name_central) # Use the variable here
     books_in_central = central_library.books.all()
     for book in books_in_central:
         print(f"- {book.title} ({book.author.name})")
 except Library.DoesNotExist:
-    print("Central Library not found.")
+    print(f"{library_name_central} not found.")
+# --- MODIFIED LINE END ---
 
 
 # --- Query 3: Retrieve the librarian for a library ---
 print("\nQuery 3: Librarian for Community Hub Library")
+# --- MODIFIED LINE START ---
+library_name_community = "Community Hub Library" # Define a variable for the library name
 try:
-    community_library = Library.objects.get(name="Community Hub Library")
+    community_library = Library.objects.get(name=library_name_community) # Use the variable here
     librarian_for_community = community_library.librarian # Access via the OneToOne relationship
     print(f"The librarian for {community_library.name} is {librarian_for_community.name}")
 except Library.DoesNotExist:
-    print("Community Hub Library not found.")
+    print(f"{library_name_community} not found.")
 except Librarian.DoesNotExist:
     print(f"No librarian found for {community_library.name}")
+# --- MODIFIED LINE END ---
