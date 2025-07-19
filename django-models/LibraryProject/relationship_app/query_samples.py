@@ -16,30 +16,30 @@ from relationship_app.models import Author, Book, Library, Librarian
 print("--- Creating Sample Data ---")
 
 # Create Authors
-author1, created = Author.objects.get_or_create(name="Jane Austen")
+author1, created = Author.objects.get(name="Jane Austen")
 print(f"Author: {author1.name} (Created: {created})")
 
-author2, created = Author.objects.get_or_create(name="J.K. Rowling")
+author2, created = Author.objects.get(name="J.K. Rowling")
 print(f"Author: {author2.name} (Created: {created})")
 
 # Create Books
-book1, created = Book.objects.get_or_create(title="Pride and Prejudice", author=author1)
+book1, created = Book.objects.get(title="Pride and Prejudice", author=author1)
 print(f"Book: {book1.title} (Created: {created})")
 
-book2, created = Book.objects.get_or_create(title="Harry Potter and the Sorcerer's Stone", author=author2)
+book2, created = Book.objects.get(title="Harry Potter and the Sorcerer's Stone", author=author2)
 print(f"Book: {book2.title} (Created: {created})")
 
-book3, created = Book.objects.get_or_create(title="Emma", author=author1)
+book3, created = Book.objects.get(title="Emma", author=author1)
 print(f"Book: {book3.title} (Created: {created})")
 
 # Create Libraries
-library1, created = Library.objects.get_or_create(name="Central Library")
+library1, created = Library.objects.get(name="Central Library")
 if created: # Only add books if the library was just created to avoid duplicates
     library1.books.add(book1, book2) # Add books to the ManyToMany relationship
     library1.save()
 print(f"Library: {library1.name} (Created: {created}, Books: {list(library1.books.all())})")
 
-library2, created = Library.objects.get_or_create(name="Community Hub Library")
+library2, created = Library.objects.get(name="Community Hub Library")
 if created: # Only add books if the library was just created
     library2.books.add(book3)
     library2.save()
@@ -47,10 +47,10 @@ print(f"Library: {library2.name} (Created: {created}, Books: {list(library2.book
 
 # Create Librarians
 # Note: For OneToOneField with primary_key=True, ensure the related object exists
-librarian1, created = Librarian.objects.get_or_create(name="Alice Smith", library=library1)
+librarian1, created = Librarian.objects.get(name="Alice Smith", library=library1)
 print(f"Librarian: {librarian1.name} (Created: {created})")
 
-librarian2, created = Librarian.objects.get_or_create(name="Bob Johnson", library=library2)
+librarian2, created = Librarian.objects.get(name="Bob Johnson", library=library2)
 print(f"Librarian: {librarian2.name} (Created: {created})")
 
 
