@@ -16,7 +16,9 @@ def run_queries():
     book2 = Book.objects.create(title="Arrow of God", author=author1)
     book3 = Book.objects.create(title="The River Between", author=author2)
 
-    library = Library.objects.create(name="Main Campus Library")
+    Library.objects.create(name="Main Campus Library")
+    library_name = "Main Campus Library"
+    library = Library.objects.get(name=library_name) 
     library.books.set([book1, book2, book3])  # ManyToMany add
 
     librarian = Librarian.objects.create(name="Jane Doe", library=library)
