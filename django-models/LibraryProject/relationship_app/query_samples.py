@@ -6,8 +6,8 @@ import django
 # --- Setup Django Environment ---
 # This line sets the DJANGO_SETTINGS_MODULE environment variable
 # to point to your project's settings file.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LibraryProject.settings')
-django.setup()
+#os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LibraryProject.LibraryProject.settings')
+#django.setup()
 
 # --- Import your models ---
 from relationship_app.models import Author, Book, Library, Librarian
