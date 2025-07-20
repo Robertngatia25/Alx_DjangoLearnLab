@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth.forms import  UserCreationForm
+from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.detail import DetailView 
 from .models import Library, Book
 from django.contrib.auth import login, logout, aauthenticate
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import UserProfile
+
 
 
 def list_books(request):
@@ -48,3 +51,23 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
+
+def check_role(role):
+    def decorator(user):
+        return hasattr(user, 'userprofile') and user.userprofile.role == role
+    return decorator
+
+@login_required
+@user_passes_test(check_role('Admin'))
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+@login_required
+@user_passes_test(check_role('Librarian'))
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+@login_required
+@user_passes_test(check_role('Member'))
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
