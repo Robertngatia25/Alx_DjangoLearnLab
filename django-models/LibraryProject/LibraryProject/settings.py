@@ -122,3 +122,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# URL to redirect to after successful login (e.g., to the books list)
+LOGIN_REDIRECT_URL = '/relationships/books/'
+# URL to redirect to after successful logout (e.g., back to the login page)
+LOGOUT_REDIRECT_URL = '/relationships/login/'
+# URL where Django's built-in login required decorator/middleware will redirect unauthenticated users
+LOGIN_URL = '/relationships/login/'
