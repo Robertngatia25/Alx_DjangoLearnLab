@@ -3,8 +3,8 @@ from django.views.generic.detail import DetailView
 from .models import Library, Book
 
 def list_books(request):
-    books = Book.objects.select_related('author').all()
-    return render(request, 'list_books.html', {'books': books})
+    books = Book.objects.all()
+    return render(request, 'relationship_app/list_books.html', {'books': books})
 
 # --- 2. Class-based View: Display details for a specific library ---
 # DetailView is used to display a single object's details.
