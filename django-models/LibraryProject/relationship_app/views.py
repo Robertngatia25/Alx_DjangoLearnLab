@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView 
 from .models import Library, Book
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 def list_books(request):
     books = Book.objects.all()
@@ -19,3 +21,28 @@ class LibraryDetailView(DetailView):
     # Note: DetailView automatically fetches the object based on the 'pk' (primary key)
     # or 'slug' provided in the URL. We'll use 'pk'.
 
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('/')  # Redirect to homepage or dashboard
+    else:
+        form = AuthenticationForm()
+    return render(request, 'relationship_app/login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return render(request, 'relationship_app/logout.html')
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('/')
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
