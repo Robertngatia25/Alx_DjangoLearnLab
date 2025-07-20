@@ -12,7 +12,7 @@ class LibraryDetailView(DetailView):
     # Specify the model that this view will display details for
     model = Library
     # Specify the template to use for rendering
-    template_name = 'library_detail.html'
+    template_name = 'relationship_app/library_detail.html'
     # Optional: Change the context variable name from 'object' to 'library' for clarity in template
     context_object_name = 'library'
 
