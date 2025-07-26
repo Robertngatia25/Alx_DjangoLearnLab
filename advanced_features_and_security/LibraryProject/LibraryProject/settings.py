@@ -129,3 +129,19 @@ LOGIN_REDIRECT_URL = '/relationships/books/'
 LOGOUT_REDIRECT_URL = '/relationships/login/'
 # URL where Django's built-in login required decorator/middleware will redirect unauthenticated users
 LOGIN_URL = '/relationships/login/'
+
+DEBUG = False  # Only set this to True during development
+
+# Security headers
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Secure cookies
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Optional: Add CSP if using django-csp
+# INSTALLED_APPS += ['csp']
+# MIDDLEWARE += ['csp.middleware.CSPMiddleware']
+# CSP_DEFAULT_SRC = ("'self'",)

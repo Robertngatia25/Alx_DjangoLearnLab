@@ -17,3 +17,19 @@ Permissions Setup:
   - Admins: all permissions including delete
 Views are protected using @permission_required for access control.
 """
+# Security Measures in Django Project
+
+## settings.py
+- Enforced browser-side protections
+- Enabled secure cookies
+- Disabled DEBUG in production
+
+## Templates
+- Added {% csrf_token %} in all forms
+
+## Views
+- All queries use Django ORM
+- Inputs are validated using Django forms
+
+## CSP
+- Implemented via django-csp to reduce XSS risk
