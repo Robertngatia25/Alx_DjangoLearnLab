@@ -142,6 +142,9 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # Optional: Add CSP if using django-csp
-# INSTALLED_APPS += ['csp']
-# MIDDLEWARE += ['csp.middleware.CSPMiddleware']
-# CSP_DEFAULT_SRC = ("'self'",)
+
+INSTALLED_APPS += ['csp']
+MIDDLEWARE += ['csp.middleware.CSPMiddleware']
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", 'fonts.googleapis.com')
+CSP_FONT_SRC = ("'self'", 'fonts.gstatic.com')
