@@ -3,7 +3,8 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import permission_required
 from .models import Book
 from django.http import HttpResponse
-from .forms import BookForm
+from .forms import BookForm 
+from .forms import ExampleForm
 
 def search_books(request):
     query = request.GET.get("q")
