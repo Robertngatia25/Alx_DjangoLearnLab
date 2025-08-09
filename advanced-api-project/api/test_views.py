@@ -17,24 +17,11 @@ Run with:
 """
 
 class BookAPITestCase(APITestCase):
-    def setUp(self):
-        # Create test user
-        self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.client.login(username='testuser', password='testpass')
-
-        # Create an author
-        self.author = Author.objects.create(name="Author One")
-
-        # Create a book
-        self.book = Book.objects.create(
-            title="Test Book",
-            publication_year=2020,
-            author=self.author
-        )
-
-        # URLs
-        self.list_url = reverse('book-list')   # Name from urls.py
-        self.detail_url = reverse('book-detail', args=[self.book.id])
+    def test_get_books(self):
+        url = reverse('book-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('title', response.data[0]) 
 
     def test_create_book(self):
         data = {
