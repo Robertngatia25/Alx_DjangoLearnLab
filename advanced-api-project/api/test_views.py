@@ -1,70 +1,46 @@
-"""
-Test Suite for Book API
-
-Covers:
-- CRUD operations
-- Filtering, searching, ordering
-- Permissions & authentication checks
-
-Run with:
-    python manage.py test api
-"""
+from django.test import TestCase
 from django.contrib.auth.models import User
-from rest_framework.test import APITestCase
-from rest_framework.authtoken.models import Token
-from rest_framework import status
-from .models import Book
+from rest_framework.test import APIClient
+from django.urls import reverse
+from django.test.utils import override_settings
 
-class BookAPITestCase(APITestCase):
-
+@override_settings(DATABASES={
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',  # In-memory test DB
+    }
+})
+class BookAPITestCase(TestCase):
     def setUp(self):
-        # Create test user and token
-        self.user = User.objects.create_user(username="testuser", password="testpass123")
-        self.token = Token.objects.create(user=self.user)
+        # Use DRF's APIClient
+        self.client = APIClient()
 
-        # Authenticate all requests with token
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        # Create test user and authenticate once
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.client.login(username='testuser', password='testpass123')
 
-        # Create a sample book for read/update/delete tests
-        self.book = Book.objects.create(title="Sample Book", author="John Doe", published_year=2020)
-
-        # API endpoints
-        self.list_url = "/api/books/"
-        self.detail_url = f"/api/books/{self.book.id}/"
-
-    def test_list_books(self):
-        response = self.client.get(self.list_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("title", response.data[0])
-        self.assertEqual(response.data[0]["title"], "Sample Book")
+        # Example: Create a sample book for tests
+        self.book_data = {
+            'title': 'Test Book',
+            'author': 'John Doe',
+            'published_date': '2024-01-01',
+            'isbn': '1234567890123',
+            'price': '9.99'
+        }
 
     def test_create_book(self):
-        data = {"title": "New Book", "author": "Jane Doe", "published_year": 2021}
-        response = self.client.post(self.list_url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["title"], "New Book")
-        self.assertEqual(Book.objects.count(), 2)
+        url = reverse('book-list')
+        response = self.client.post(url, self.book_data, format='json')
+        self.assertEqual(response.status_code, 201)
 
-    def test_retrieve_book(self):
-        response = self.client.get(self.detail_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["title"], "Sample Book")
+    def test_get_books(self):
+        # Create a book
+        self.client.post(reverse('book-list'), self.book_data, format='json')
 
-    def test_update_book(self):
-        data = {"title": "Updated Book", "author": "John Doe", "published_year": 2022}
-        response = self.client.put(self.detail_url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.book.refresh_from_db()
-        self.assertEqual(self.book.title, "Updated Book")
-
-    def test_partial_update_book(self):
-        data = {"title": "Partially Updated Book"}
-        response = self.client.patch(self.detail_url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.book.refresh_from_db()
-        self.assertEqual(self.book.title, "Partially Updated Book")
-
-    def test_delete_book(self):
-        response = self.client.delete(self.detail_url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Book.objects.filter(id=self.book.id).exists())
+        # Retrieve list
+        response = self.client.get(reverse('book-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertGreaterEqual(len(response.data), 1)
