@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 from django.urls import reverse
 from django.test.utils import override_settings
+from rest_framework import status
 
 @override_settings(DATABASES={
     'default': {
