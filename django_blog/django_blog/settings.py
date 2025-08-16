@@ -59,6 +59,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -75,8 +76,12 @@ WSGI_APPLICATION = 'django_blog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_blog_db',   # database name
+        'USER': 'postgres',         # postgres username
+        'PASSWORD': 'Admin',        # postgres password
+        'HOST': 'localhost',        # DB server
+        'PORT': '5432',             # default Postgres port
     }
 }
 
@@ -123,5 +128,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
