@@ -8,9 +8,9 @@ urlpatterns = [
     path("", home_view, name="home"),
 
   # CRUD routes
-    path("posts/", PostListView.as_view(), name="posts"),              # list
-    path("posts/new/", PostCreateView.as_view(), name="post-create"),  # create
-    path("posts/<int:pk>/", PostDetailView.as_view(), name="post-detail"),  # detail
+    path("posts/", PostListView.as_view(), name="posts"),           # list all posts
+    path("post/new/", PostCreateView.as_view(), name="post-new"),   # create new post
+    path("post/<int:pk>/", PostDetailView.as_view(), name="post-detail"), 
     path("post/<int:pk>/update/", PostUpdateView.as_view(), name="post-update"),  # update
     path("post/<int:pk>/delete/", PostDeleteView.as_view(), name="post-delete"),
 
