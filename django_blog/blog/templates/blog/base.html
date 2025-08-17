@@ -19,10 +19,16 @@
     </header>
 
     <div class="content">
-        {% block content %}
-        <!-- Page-specific content goes here -->
-        {% endblock %}
-    </div>
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
 
     <footer>
         <p>&copy; 2024 Django Blog</p>

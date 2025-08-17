@@ -10,3 +10,14 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+class Profile(models.Model):
+    """
+    Profile extend to all users,
+    each user shall have a profile.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Profile({self.user.username})"
