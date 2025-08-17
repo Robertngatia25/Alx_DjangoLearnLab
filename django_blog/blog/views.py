@@ -3,8 +3,13 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from .forms import RegistrationForm, UserUpdateForm, ProfileForm
+from .forms import RegistrationForm, UserUpdateForm, ProfileForm 
+from .models import Post
+from .forms import PostForm
 
 # --- Auth views using Django built-ins ---
 class UserLoginView(LoginView):
@@ -54,3 +59,51 @@ def profile_view(request):
 def home_view(request):
     return render(request, "blog/home.html")
 
+class PostListView(ListView):
+    model = Post
+    template_name = "blog/post_list.html"
+    context_object_name = "posts"
+    paginate_by = 10
+    ordering = ["-published_date"]  # newest first
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = "blog/post_detail.html"
+    context_object_name = "post"
+
+# Authenticated users can create; author set in form_valid
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_form.html"
+    success_url = reverse_lazy("posts")
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, "Post created.")
+        return super().form_valid(form)
+
+# Only the author can edit/delete
+class AuthorRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
+
+class PostUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_form.html"
+    success_url = reverse_lazy("posts")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Post updated.")
+        return super().form_valid(form)
+
+class PostDeleteView(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
+    model = Post
+    template_name = "blog/post_confirm_delete.html"
+    success_url = reverse_lazy("posts")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Post deleted.")
+        return super().delete(request, *args, **kwargs)
