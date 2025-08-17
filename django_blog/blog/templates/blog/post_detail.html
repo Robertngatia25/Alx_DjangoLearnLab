@@ -17,37 +17,32 @@
 <hr>
 <h2>Comments</h2>
 
-<div class="comments">
-    {% for comment in object.comments.all %}
-        <div class="comment">
-            <p>{{ comment.content }}</p>
-            <small>By {{ comment.author.username }} on {{ comment.created_at }}</small>
+{% for comment in post.comments.all %}
+    <div class="comment">
+      <p><strong>{{ comment.author.username }}</strong> said:</p>
+      <p>{{ comment.content }}</p>
+      <p><small>Created: {{ comment.created_at }} | Updated: {{ comment.updated_at }}</small></p>
 
-            {% if user == comment.author %}
-                <form action="{% url 'comment-update' comment.pk %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <textarea name="content">{{ comment.content }}</textarea>
-                    <button type="submit">Update</button>
-                </form>
+      <!-- Edit/Delete buttons only visible to comment author -->
+      {% if user == comment.author %}
+        <a href="{% url 'comment-update' comment.pk %}">Edit</a>
+        <a href="{% url 'comment-delete' comment.pk %}">Delete</a>
+      {% endif %}
+    </div>
+    <hr>
+  {% empty %}
+    <p>No comments yet. Be the first to comment!</p>
+  {% endfor %}
 
-                <form action="{% url 'comment-delete' comment.pk %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No comments yet. Be the first!</p>
-    {% endfor %}
-</div>
-
-{% if user.is_authenticated %}
-    <h3>Add a Comment</h3>
-    <form action="{% url 'comment-create' object.id %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Post Comment</button>
+  <!-- Add Comment Form (only visible to logged-in users) -->
+  {% if user.is_authenticated %}
+    <h3>Leave a Comment</h3>
+    <form method="post" action="{% url 'comment-create' post.pk %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Add Comment</button>
     </form>
-{% else %}
-    <p><a href="{% url 'login' %}">Login</a> to comment.</p>
-{% endif %}
+  {% else %}
+    <p><a href="{% url 'login' %}">Login</a> to leave a comment.</p>
+  {% endif %}
+{% endblock %}
