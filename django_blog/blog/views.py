@@ -5,11 +5,12 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
+from django.shortcuts import get_object_or_404, redirect
 
 from .forms import RegistrationForm, UserUpdateForm, ProfileForm 
-from .models import Post
-from .forms import PostForm
+from .models import Post,Comment
+from .forms import PostForm, CommentForm
 
 # --- Auth views using Django built-ins ---
 class UserLoginView(LoginView):
@@ -107,3 +108,37 @@ class PostDeleteView(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Post deleted.")
         return super().delete(request, *args, **kwargs)
+    
+class CommentCreateView(LoginRequiredMixin, View):
+    def post(self, request, post_id, *args, **kwargs):
+        post = get_object_or_404(Post, id=post_id)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+        return redirect('post-detail', pk=post.id)
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk)
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+        return redirect('post-detail', pk=comment.post.id)
+
+    def test_func(self):
+        comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
+        return self.request.user == comment.author
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=pk)
+        post_id = comment.post.id
+        comment.delete()
+        return redirect('post-detail', pk=post_id)
+
+    def test_func(self):
+        comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
+        return self.request.user == comment.author
