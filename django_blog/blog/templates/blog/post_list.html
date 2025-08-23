@@ -1,37 +1,21 @@
-{% extends 'blog/base.html' %}
+{% extends "blog/base.html" %}
+
 {% block title %}All Posts{% endblock %}
+
 {% block content %}
-<h2>All Posts</h2>
+<h1>All Blog Posts</h1>
 
 {% if user.is_authenticated %}
-  <p><a href="{% url 'post-create' %}" class="btn">+ New Post</a></p>
+    <a href="{% url 'post-new' %}" class="btn">+ New Post</a>
 {% endif %}
 
-{% if posts %}
-  <ul class="post-list">
-    {% for p in posts %}
-      <li class="post-item">
-        <h3><a href="{% url 'post-detail' p.pk %}">{{ p.title }}</a></h3>
-        <small>By {{ p.author.username }} · {{ p.published_date }}</small>
-        <p>{{ p.content|truncatewords:30 }}</p>
-        {% if user == p.author %}
-          <p>
-            <a href="{% url 'post-edit' p.pk %}">Edit</a> |
-            <a href="{% url 'post-delete' p.pk %}">Delete</a>
-          </p>
-        {% endif %}
-      </li>
+<ul>
+    {% for post in object_list %}
+        <li>
+            <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+            <p>{{ post.content|truncatechars:100 }}</p>
+            <small>By {{ post.author.username }} on {{ post.published_date }}</small>
+        </li>
     {% endfor %}
-  </ul>
-
-  <div class="pagination">
-    {% if is_paginated %}
-      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">Prev</a>{% endif %}
-      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Next</a>{% endif %}
-    {% endif %}
-  </div>
-{% else %}
-  <p>No posts yet.</p>
-{% endif %}
+</ul>
 {% endblock %}
