@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
+
 # For registering new users
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -13,17 +14,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password', 'bio', 'profile_picture']
 
     def create(self, validated_data):
+        # ✅ use create_user (not create)
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
             password=validated_data['password']
         )
-        # Add extra fields if needed
+        # Add optional fields
         user.bio = validated_data.get('bio', '')
         user.profile_picture = validated_data.get('profile_picture', None)
         user.save()
 
-        # Generate token for new user
+        # Create auth token immediately
         Token.objects.create(user=user)
         return user
 
